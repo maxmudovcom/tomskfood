@@ -2,557 +2,580 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Maxmudov · шашлык в Томске с погодой</title>
-    <!-- Шрифты -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Maxmudov 3D шашлык</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            color: #fff;
-            line-height: 1.5;
-            background-color: #0a0c0e;
-        }
-
-        /* Фоновое видео/изображение с мангалом */
-        .hero-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
+            margin: 0;
             overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            color: white;
         }
-
-        .hero-background video {
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            object-fit: cover;
-            filter: brightness(0.6) contrast(1.1);
-        }
-
-        /* Если видео не загрузится — будет картинка */
-        .hero-background::after {
-            content: '';
+        /* Интерфейс поверх 3D */
+        #ui-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop') center/cover no-repeat;
-            opacity: 0.5;
-            z-index: -1;
-        }
-
-        /* Затемнение поверх фона для читаемости */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: -1;
             pointer-events: none;
+            z-index: 10;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Логотип */
         .logo {
             font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #ffffff 0%, #e8b35c 80%);
+            background: linear-gradient(135deg, #fff, #e8b35c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            display: inline-block;
-            letter-spacing: -0.5px;
-            text-shadow: 0 2px 10px rgba(232,179,92,0.3);
-        }
-
-        /* Шапка */
-        .header {
-            padding: 25px 0;
-            border-bottom: 1px solid rgba(232,179,92,0.2);
-            background: rgba(10,12,14,0.7);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .free-badge {
-            background: rgba(232,179,92,0.15);
+            backdrop-filter: blur(5px);
+            padding: 10px 20px;
+            border-radius: 50px;
             border: 1px solid rgba(232,179,92,0.3);
-            padding: 8px 22px;
+            background: rgba(0,0,0,0.3);
+            pointer-events: auto;
+        }
+        .free-badge {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(232,179,92,0.4);
+            padding: 10px 25px;
             border-radius: 40px;
-            font-weight: 500;
             color: #e8b35c;
-            backdrop-filter: blur(4px);
-        }
-
-        .free-badge i {
-            margin-right: 8px;
-        }
-
-        .btn-transparent {
+            font-weight: 500;
             display: inline-flex;
             align-items: center;
             gap: 10px;
+            pointer-events: auto;
+        }
+        .price-tag {
+            position: absolute;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid #e8b35c;
+            color: #e8b35c;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 5;
+        }
+        #order-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(232,179,92,0.3);
+            border-radius: 60px;
+            padding: 15px 30px;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 20;
+            pointer-events: auto;
+        }
+        .btn {
             background: transparent;
             border: 1.5px solid rgba(255,255,255,0.2);
-            color: #fff;
+            color: white;
             padding: 12px 28px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(4px);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            cursor: pointer;
+            pointer-events: auto;
         }
-
-        .btn-transparent i {
+        .btn i {
             color: #e8b35c;
         }
-
-        .btn-transparent:hover {
+        .btn:hover {
             border-color: #e8b35c;
             background: rgba(232,179,92,0.1);
         }
-
-        /* Блок погоды */
-        .weather-block {
-            background: rgba(26, 31, 38, 0.7);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 20px 30px;
-            margin: 30px 0;
-            border: 1px solid rgba(232,179,92,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .weather-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .weather-info i {
-            font-size: 2.5rem;
-            color: #e8b35c;
-        }
-
-        .weather-temp {
-            font-size: 2rem;
-            font-weight: 600;
-        }
-
-        .weather-city {
-            font-size: 1.2rem;
-            color: #aaa;
-        }
-
-        .weather-desc {
-            color: #e8b35c;
-            font-weight: 500;
-        }
-
-        /* Главный экран */
-        .hero {
-            padding: 40px 0 30px;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            margin-bottom: 15px;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-        }
-
-        .hero h1 span {
-            color: #e8b35c;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            color: #fff;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        /* Карточки меню */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin: 60px 0;
-        }
-
-        .card {
-            background: rgba(26, 31, 38, 0.8);
-            backdrop-filter: blur(8px);
-            border-radius: 40px;
-            overflow: hidden;
-            border: 1px solid rgba(232,179,92,0.3);
-            transition: transform 0.3s, border-color 0.3s;
-            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.5);
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: #e8b35c;
-        }
-
-        .card-img {
-            width: 100%;
-            height: 240px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .card-content {
-            padding: 30px 25px;
-            text-align: center;
-        }
-
-        .card-content h3 {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .price {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #e8b35c;
-            margin: 15px 0;
-        }
-
-        .price small {
-            font-size: 1rem;
-            color: #aaa;
-        }
-
-        .desc {
-            color: #ddd;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-        }
-
-        /* Блок доставки */
-        .delivery-block {
-            background: rgba(26, 31, 38, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 60px;
-            padding: 40px 30px;
-            margin: 40px 0 60px;
-            border: 1px solid rgba(232,179,92,0.3);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            align-items: center;
-            gap: 30px;
-            text-align: center;
-        }
-
-        .delivery-item {
-            flex: 1 1 200px;
-        }
-
-        .delivery-item i {
-            font-size: 2.5rem;
-            color: #e8b35c;
-            margin-bottom: 15px;
-        }
-
-        .delivery-item h4 {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-        }
-
-        .delivery-item p {
-            color: #ddd;
-        }
-
-        /* Блок заказа */
-        .order-block {
-            background: rgba(26, 31, 38, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 80px;
-            padding: 70px 40px;
-            text-align: center;
-            border: 1px solid rgba(232,179,92,0.3);
-            margin-bottom: 60px;
-        }
-
-        .order-block h2 {
-            font-size: 2.5rem;
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 20px;
-        }
-
-        .order-block .lead {
-            font-size: 1.2rem;
-            color: #ddd;
-            margin-bottom: 40px;
-        }
-
-        .order-actions {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-
         .btn-telegram {
             border: 2px solid #e8b35c;
             color: #e8b35c;
-            padding: 16px 50px;
-            font-size: 1.3rem;
         }
-
         .btn-telegram:hover {
             background: #e8b35c;
-            color: #0a0c0e;
+            color: black;
         }
-
         .btn-telegram:hover i {
-            color: #0a0c0e;
+            color: black;
         }
-
-        /* Футер */
-        .footer {
-            border-top: 1px solid rgba(232,179,92,0.2);
-            padding: 35px 0;
-            text-align: center;
-            color: #aaa;
-            background: rgba(10,12,14,0.5);
-            backdrop-filter: blur(5px);
+        #instruction {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #ccc;
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 15;
         }
-
-        .footer .container {
+        #loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0c0e;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
+            z-index: 100;
+            transition: opacity 1s;
         }
-
-        /* Адаптация */
-        @media (max-width: 700px) {
-            .header .container {
-                flex-direction: column;
-            }
-            .order-block {
-                padding: 40px 20px;
-            }
-            .weather-block {
-                flex-direction: column;
-                text-align: center;
-            }
+        .loader {
+            border: 4px solid rgba(232,179,92,0.3);
+            border-top-color: #e8b35c;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
         }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+    <div id="loading-screen">
+        <div class="loader"></div>
+    </div>
 
-<!-- Фоновое видео с мангалом, огнём и паром -->
-<div class="hero-background">
-    <!-- Видео с man on grill (бесплатное стоковое видео с огнём) -->
-    <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop">
-        <source src="https://videos.pexels.com/video-files/5200870/5200870-uhd_2732_1440_25fps.mp4" type="video/mp4">
-        <!-- Если видео недоступно, используем картинку через CSS fallback -->
-    </video>
-</div>
-<div class="overlay"></div> <!-- Лёгкое затемнение -->
-
-<!-- Шапка с логотипом -->
-<header class="header">
-    <div class="container">
+    <div id="ui-overlay">
         <div class="logo">maxmudov.com</div>
-        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-            <span class="free-badge"><i class="fas fa-truck"></i> доставка по Томску 0₽</span>
-            <a href="tel:+79016106001" class="btn-transparent"><i class="fas fa-phone-alt"></i> +7 (901) 610-60-01</a>
-        </div>
-    </div>
-</header>
-
-<!-- Главная секция -->
-<section class="hero">
-    <div class="container">
-        <h1>Шашлык <span>на мангале</span></h1>
-        <p>Свежее мясо, приготовленное на углях с любовью. Бесплатная доставка по Томску.</p>
-    </div>
-</section>
-
-<div class="container">
-    <!-- Блок погоды для Томска (реалтайм через wttr.in) -->
-    <div class="weather-block" id="weatherWidget">
-        <div class="weather-info">
-            <i class="fas fa-cloud-sun"></i>
-            <div>
-                <div class="weather-temp" id="weatherTemp">--°C</div>
-                <div class="weather-city"><i class="fas fa-map-marker-alt"></i> Томск</div>
-            </div>
-        </div>
-        <div class="weather-desc" id="weatherDesc">Загрузка погоды...</div>
+        <div class="free-badge"><i class="fas fa-truck"></i> доставка по Томску 0₽</div>
     </div>
 
-    <!-- Меню с тремя картинками и ценами -->
-    <div class="menu-grid">
-        <!-- Курица 500₽ -->
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1603360946369-dc9bb6258143?q=80&w=1976&auto=format&fit=crop" alt="Куриный шашлык" class="card-img" loading="lazy">
-            <div class="card-content">
-                <h3>Куриный шашлык</h3>
-                <div class="price">500 ₽ <small>/ порция</small></div>
-                <div class="desc">Нежное куриное филе в кефирном маринаде с луком и специями. 400 г.</div>
-                <a href="#order" class="btn-transparent" style="width: 100%; justify-content: center;"><i class="fab fa-telegram-plane"></i> заказать</a>
-            </div>
-        </div>
-        <!-- Баранина 700₽ -->
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop" alt="Шашлык из баранины" class="card-img" loading="lazy">
-            <div class="card-content">
-                <h3>Шашлык из баранины</h3>
-                <div class="price">700 ₽ <small>/ порция</small></div>
-                <div class="desc">Мякоть баранины с луком, барбарисом и кавказскими травами. 350 г.</div>
-                <a href="#order" class="btn-transparent" style="width: 100%; justify-content: center;"><i class="fab fa-telegram-plane"></i> заказать</a>
-            </div>
-        </div>
-        <!-- Говядина 750₽ -->
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1604500131886-ffc6e5a2b82f?q=80&w=1974&auto=format&fit=crop" alt="Шашлык из говядины" class="card-img" loading="lazy">
-            <div class="card-content">
-                <h3>Шашлык из говядины</h3>
-                <div class="price">750 ₽ <small>/ порция</small></div>
-                <div class="desc">Мраморная говядина, маринованная с киви и розмарином. 380 г.</div>
-                <a href="#order" class="btn-transparent" style="width: 100%; justify-content: center;"><i class="fab fa-telegram-plane"></i> заказать</a>
-            </div>
-        </div>
+    <div id="instruction">
+        <i class="fas fa-mouse"></i> вращай • <i class="fas fa-search-plus"></i> приближай • кликни по шашлыку для рецепта
     </div>
 
-    <!-- Блок с доставкой и оплатой -->
-    <div class="delivery-block">
-        <div class="delivery-item">
-            <i class="fas fa-truck"></i>
-            <h4>Бесплатно</h4>
-            <p>Доставка по Томску при заказе от 2 порций</p>
-        </div>
-        <div class="delivery-item">
-            <i class="fas fa-money-bill-wave"></i>
-            <h4>Наличные</h4>
-            <p>Оплата курьеру при получении</p>
-        </div>
-        <div class="delivery-item">
-            <i class="fas fa-fire"></i>
-            <h4>На мангале</h4>
-            <p>Готовим в день заказа</p>
-        </div>
+    <div id="order-panel">
+        <a href="https://t.me/+79016106001" class="btn btn-telegram" target="_blank"><i class="fab fa-telegram-plane"></i> Telegram</a>
+        <a href="tel:+79016106001" class="btn"><i class="fas fa-phone-alt"></i> +7 (901) 610-60-01</a>
     </div>
 
-    <!-- Блок заказа в Telegram (якорь) -->
-    <div id="order" class="order-block">
-        <h2>Хотите сочного шашлыка?</h2>
-        <div class="lead">Напишите нам в Telegram — выберите мясо, время и адрес доставки</div>
-        <div class="order-actions">
-            <a href="https://t.me/+79016106001" class="btn-transparent btn-telegram" target="_blank"><i class="fab fa-telegram-plane"></i> t.me/maxmudov</a>
-            <a href="tel:+79016106001" class="btn-transparent"><i class="fas fa-phone-alt"></i> +7 (901) 610-60-01</a>
-        </div>
-        <div style="margin-top: 30px; color: #aaa;">
-            <i class="fas fa-clock"></i> Работаем с 12:00 до 23:00
-        </div>
-    </div>
-</div>
+    <!-- Подключаем Three.js и дополнения -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
 
-<!-- Футер -->
-<footer class="footer">
-    <div class="container">
-        <div class="logo" style="font-size: 1.8rem;">maxmudov.com</div>
-        <div>© 2025 · Шашлык в Томске</div>
-        <div>+7 (901) 610-60-01 (Telegram)</div>
-    </div>
-</footer>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-<!-- Скрипт для получения погоды в реальном времени (Томск) -->
-<script>
-    (function() {
-        const city = 'Томск';
-        const weatherTempEl = document.getElementById('weatherTemp');
-        const weatherDescEl = document.getElementById('weatherDesc');
+        // --- Инициализация ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a2b2a); // темный лесной фон
+        // Добавляем туман
+        scene.fog = new THREE.Fog(0x1a2b2a, 10, 30);
 
-        // Используем бесплатный сервис wttr.in (не требует API ключа)
-        fetch('https://wttr.in/Tomsk?format=%t+%C&lang=ru')
-            .then(response => response.text())
-            .then(data => {
-                // Пример ответа: "-12°C Облачно"
-                const parts = data.trim().split(' ');
-                const temp = parts[0]; // температура с символом °C
-                const desc = parts.slice(1).join(' '); // описание
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(5, 3, 8);
 
-                weatherTempEl.innerText = temp;
-                weatherDescEl.innerText = desc.charAt(0).toUpperCase() + desc.slice(1);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document.body.appendChild(renderer.domElement);
 
-                // Меняем иконку в зависимости от описания (упрощённо)
-                const icon = document.querySelector('#weatherWidget i');
-                if (desc.includes('дожд') || desc.includes('drizzle')) {
-                    icon.className = 'fas fa-cloud-rain';
-                } else if (desc.includes('снег') || desc.includes('snow')) {
-                    icon.className = 'fas fa-snowflake';
-                } else if (desc.includes('облач') || desc.includes('cloud')) {
-                    icon.className = 'fas fa-cloud';
-                } else if (desc.includes('ясн') || desc.includes('clear')) {
-                    icon.className = 'fas fa-sun';
-                } else {
-                    icon.className = 'fas fa-cloud-sun';
+        // --- Освещение (атмосфера мангала) ---
+        // Солнце/луна
+        const dirLight = new THREE.DirectionalLight(0xffeedd, 1.2);
+        dirLight.position.set(5, 10, 7);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 1024;
+        dirLight.shadow.mapSize.height = 1024;
+        dirLight.shadow.camera.near = 2;
+        dirLight.shadow.camera.far = 20;
+        dirLight.shadow.camera.left = -5;
+        dirLight.shadow.camera.right = 5;
+        dirLight.shadow.camera.top = 5;
+        dirLight.shadow.camera.bottom = -5;
+        scene.add(dirLight);
+
+        // Теплый свет от мангала
+        const fireLight1 = new THREE.PointLight(0xff5500, 1.0, 6);
+        fireLight1.position.set(-1, 0.8, 1);
+        scene.add(fireLight1);
+        const fireLight2 = new THREE.PointLight(0xffaa00, 1.0, 6);
+        fireLight2.position.set(1, 0.8, -1);
+        scene.add(fireLight2);
+        
+        // Заполняющий свет
+        const ambientLight = new THREE.AmbientLight(0x404060);
+        scene.add(ambientLight);
+
+        // --- Контролы ---
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.8;
+        controls.enableZoom = true;
+        controls.maxPolarAngle = Math.PI / 2.2;
+        controls.minDistance = 3;
+        controls.maxDistance = 15;
+        controls.target.set(0, 1, 0);
+
+        // --- Создание сцены с природой и мангалом ---
+        
+        // Земля с травой (текстура)
+        const groundGeometry = new THREE.CircleGeometry(12, 32);
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x2a4a3a, roughness: 0.9, emissive: new THREE.Color(0x112211) });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.position.y = -0.1;
+        ground.receiveShadow = true;
+        scene.add(ground);
+
+        // Костер/мангал
+        // Основание из камней
+        for (let i = 0; i < 12; i++) {
+            const stoneGeo = new THREE.DodecahedronGeometry(0.2 + Math.random()*0.2);
+            const stoneMat = new THREE.MeshStandardMaterial({ color: 0x886644, roughness: 0.8 });
+            const stone = new THREE.Mesh(stoneGeo, stoneMat);
+            const angle = (i / 12) * Math.PI * 2;
+            stone.position.set(Math.cos(angle)*1.1, 0.1, Math.sin(angle)*1.1);
+            stone.castShadow = true;
+            stone.receiveShadow = true;
+            scene.add(stone);
+        }
+        
+        // Дрова
+        const woodMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B, roughness: 0.9 });
+        for (let i = 0; i < 5; i++) {
+            const logGeo = new THREE.CylinderGeometry(0.15, 0.15, 1.2);
+            const log = new THREE.Mesh(logGeo, woodMat);
+            log.rotation.z = Math.random() * 0.5;
+            log.rotation.x = Math.random() * 0.5;
+            log.position.set(-0.3 + i*0.15, 0.2, -0.2 + i*0.1);
+            log.castShadow = true;
+            log.receiveShadow = true;
+            scene.add(log);
+        }
+
+        // Угли
+        const emberMat = new THREE.MeshStandardMaterial({ color: 0xff3300, emissive: new THREE.Color(0x441100) });
+        for (let i = 0; i < 15; i++) {
+            const emberGeo = new THREE.SphereGeometry(0.05 + Math.random()*0.1, 5);
+            const ember = new THREE.Mesh(emberGeo, emberMat);
+            ember.position.set(-0.5 + Math.random(), 0.15 + Math.random()*0.2, -0.5 + Math.random());
+            ember.castShadow = true;
+            ember.receiveShadow = true;
+            scene.add(ember);
+        }
+
+        // Решетка над мангалом
+        const gridGeo = new THREE.BoxGeometry(2.5, 0.05, 1.5);
+        const gridMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.4, metalness: 0.7, emissive: new THREE.Color(0x221100) });
+        const grid = new THREE.Mesh(gridGeo, gridMat);
+        grid.position.set(0, 0.6, 0);
+        grid.castShadow = true;
+        grid.receiveShadow = true;
+        scene.add(grid);
+
+        // --- Создание шашлыков (реалистичные модели) ---
+        // Вместо загрузки внешних моделей, создаем составные объекты, максимально похожие на фото
+        
+        function createChickenSkewer(posX) {
+            const group = new THREE.Group();
+            const meatColor = 0xffaa66; // куриный цвет
+            const specColor = 0xffeedd;
+            
+            // Шампур
+            const skewerGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.8);
+            const skewerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.8 });
+            const skewer = new THREE.Mesh(skewerGeo, skewerMat);
+            skewer.rotation.z = Math.PI / 2;
+            skewer.position.x = 0;
+            skewer.castShadow = true;
+            skewer.receiveShadow = true;
+            group.add(skewer);
+            
+            // Куски курицы (неровные, обжаренные)
+            for (let i = -0.7; i <= 0.7; i+=0.45) {
+                const meatGeo = new THREE.SphereGeometry(0.22, 7);
+                const meatMat = new THREE.MeshStandardMaterial({ color: meatColor, roughness: 0.3, emissive: new THREE.Color(0x221100) });
+                const meat = new THREE.Mesh(meatGeo, meatMat);
+                meat.position.x = i;
+                meat.position.y = 0.05 * Math.sin(i*4);
+                meat.scale.set(1.1, 0.9, 0.9);
+                meat.castShadow = true;
+                meat.receiveShadow = true;
+                group.add(meat);
+            }
+            
+            // Лук/перец
+            const onionMat = new THREE.MeshStandardMaterial({ color: 0xddbb99 });
+            for (let i = -0.4; i <= 0.4; i+=0.8) {
+                const onionGeo = new THREE.TorusGeometry(0.1, 0.04, 6, 10, Math.PI);
+                const onion = new THREE.Mesh(onionGeo, onionMat);
+                onion.rotation.y = Math.PI/2;
+                onion.rotation.x = 0.2;
+                onion.position.x = i;
+                onion.position.y = 0.1;
+                onion.castShadow = true;
+                onion.receiveShadow = true;
+                group.add(onion);
+            }
+            
+            group.position.set(posX, 0.8, 0);
+            group.userData = { type: 'chicken', price: '500 ₽', recipe: 'Курица: филе бедра, кефир, лук, паприка. Маринад 4ч.' };
+            return group;
+        }
+
+        function createLambSkewer(posX) {
+            const group = new THREE.Group();
+            const meatColor = 0xcc5555; // баранина
+            
+            const skewerGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.8);
+            const skewerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.8 });
+            const skewer = new THREE.Mesh(skewerGeo, skewerMat);
+            skewer.rotation.z = Math.PI / 2;
+            skewer.position.x = 0;
+            skewer.castShadow = true;
+            skewer.receiveShadow = true;
+            group.add(skewer);
+            
+            // Куски баранины
+            for (let i = -0.7; i <= 0.7; i+=0.5) {
+                const meatGeo = new THREE.SphereGeometry(0.23, 6);
+                const meatMat = new THREE.MeshStandardMaterial({ color: meatColor, roughness: 0.4, emissive: new THREE.Color(0x331100) });
+                const meat = new THREE.Mesh(meatGeo, meatMat);
+                meat.position.x = i;
+                meat.position.y = 0.1 * Math.sin(i*3);
+                meat.scale.set(1.2, 0.8, 0.8);
+                meat.castShadow = true;
+                meat.receiveShadow = true;
+                group.add(meat);
+            }
+            
+            // Жир/специи
+            const fatMat = new THREE.MeshStandardMaterial({ color: 0xffdd99 });
+            for (let i = -0.5; i <= 0.5; i+=1.0) {
+                const fatGeo = new THREE.SphereGeometry(0.08, 5);
+                const fat = new THREE.Mesh(fatGeo, fatMat);
+                fat.position.x = i;
+                fat.position.y = 0.2;
+                fat.castShadow = true;
+                group.add(fat);
+            }
+            
+            group.position.set(posX, 0.8, 0);
+            group.userData = { type: 'lamb', price: '700 ₽', recipe: 'Баранина: мякоть ноги, барбарис, зира, лук. Маринад 6ч.' };
+            return group;
+        }
+
+        function createBeefSkewer(posX) {
+            const group = new THREE.Group();
+            const meatColor = 0x884422; // говядина
+            
+            const skewerGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.8);
+            const skewerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.8 });
+            const skewer = new THREE.Mesh(skewerGeo, skewerMat);
+            skewer.rotation.z = Math.PI / 2;
+            skewer.position.x = 0;
+            skewer.castShadow = true;
+            skewer.receiveShadow = true;
+            group.add(skewer);
+            
+            // Крупные куски говядины
+            for (let i = -0.7; i <= 0.7; i+=0.55) {
+                const meatGeo = new THREE.SphereGeometry(0.24, 8);
+                const meatMat = new THREE.MeshStandardMaterial({ color: meatColor, roughness: 0.3, emissive: new THREE.Color(0x221100) });
+                const meat = new THREE.Mesh(meatGeo, meatMat);
+                meat.position.x = i;
+                meat.position.y = 0.1;
+                meat.scale.set(1.3, 0.7, 0.7);
+                meat.castShadow = true;
+                meat.receiveShadow = true;
+                group.add(meat);
+            }
+            
+            // Травы
+            const herbMat = new THREE.MeshStandardMaterial({ color: 0x33aa33 });
+            for (let i = -0.3; i <= 0.3; i+=0.6) {
+                const herbGeo = new THREE.ConeGeometry(0.05, 0.1, 4);
+                const herb = new THREE.Mesh(herbGeo, herbMat);
+                herb.position.x = i;
+                herb.position.y = 0.25;
+                herb.castShadow = true;
+                group.add(herb);
+            }
+            
+            group.position.set(posX, 0.8, 0);
+            group.userData = { type: 'beef', price: '750 ₽', recipe: 'Говядина: мраморная вырезка, киви, розмарин. Маринад 2ч.' };
+            return group;
+        }
+
+        // Размещаем три шампура
+        const chicken = createChickenSkewer(-1.5);
+        const lamb = createLambSkewer(0);
+        const beef = createBeefSkewer(1.5);
+        
+        scene.add(chicken);
+        scene.add(lamb);
+        scene.add(beef);
+
+        // Добавляем деревья/кусты для атмосферы
+        const treeMat = new THREE.MeshStandardMaterial({ color: 0x3a6b4a });
+        const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B });
+        for (let t = 0; t < 8; t++) {
+            const angle = (t / 8) * Math.PI * 2;
+            const radius = 4 + Math.random()*2;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+            
+            const trunkGeo = new THREE.CylinderGeometry(0.2, 0.3, 1.5);
+            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+            trunk.position.set(x, 0.7, z);
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            scene.add(trunk);
+            
+            const foliageGeo = new THREE.ConeGeometry(0.8, 1.2, 6);
+            const foliage = new THREE.Mesh(foliageGeo, treeMat);
+            foliage.position.set(x, 1.5, z);
+            foliage.castShadow = true;
+            foliage.receiveShadow = true;
+            scene.add(foliage);
+        }
+
+        // Дым/пар (частицы)
+        const particleCount = 40;
+        const particleGeo = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount * 3; i += 3) {
+            particlePositions[i] = (Math.random() - 0.5) * 1.5;
+            particlePositions[i+1] = Math.random() * 2.5;
+            particlePositions[i+2] = (Math.random() - 0.5) * 1.5;
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0xcccccc, size: 0.08, transparent: true, opacity: 0.3, blending: THREE.NormalBlending });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        particles.position.set(0, 0.6, 0);
+        scene.add(particles);
+
+        // Звезды/искры
+        const starsGeo = new THREE.BufferGeometry();
+        const starsPos = new Float32Array(200 * 3);
+        for (let i = 0; i < 200 * 3; i += 3) {
+            starsPos[i] = (Math.random() - 0.5) * 40;
+            starsPos[i+1] = (Math.random() - 0.5) * 20 + 5;
+            starsPos[i+2] = (Math.random() - 0.5) * 40;
+        }
+        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
+        const starsMat = new THREE.PointsMaterial({ color: 0xe8b35c, size: 0.1 });
+        const stars = new THREE.Points(starsGeo, starsMat);
+        scene.add(stars);
+
+        // --- Рэйкаст для интерактива (клик по шашлыку) ---
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        
+        window.addEventListener('click', (event) => {
+            mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+            mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            
+            const objects = [chicken, lamb, beef];
+            const intersects = raycaster.intersectObjects(objects, true); // включая потомков
+            
+            if (intersects.length > 0) {
+                // Находим корневую группу с userData
+                let obj = intersects[0].object;
+                while (obj.parent && !obj.userData?.recipe) {
+                    obj = obj.parent;
                 }
-            })
-            .catch(error => {
-                console.error('Ошибка получения погоды:', error);
-                weatherTempEl.innerText = '--°C';
-                weatherDescEl.innerText = 'Погода временно недоступна';
-            });
-    })();
-</script>
+                if (obj.userData?.recipe) {
+                    alert(`🔥 ${obj.userData.type}\n${obj.userData.recipe}\nЦена: ${obj.userData.price}`);
+                } else {
+                    alert('Сочный шашлык на мангале!');
+                }
+            }
+        });
 
-<!-- Поддержка видео на случай, если источник не загрузится -->
+        // --- Анимация ---
+        let clock = new THREE.Clock();
+        
+        function animate() {
+            const delta = clock.getDelta();
+            const time = performance.now() * 0.001;
+            
+            // Анимация огня (мерцание)
+            const flicker = Math.sin(time * 8) * 0.2 + 0.8;
+            fireLight1.intensity = 0.8 + flicker * 0.3;
+            fireLight2.intensity = 0.8 + flicker * 0.3;
+            
+            // Вращение звезд
+            stars.rotation.y += 0.0005;
+            
+            // Движение частиц дыма
+            particles.rotation.y += 0.001;
+            
+            controls.update();
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+
+        // --- Обработка ресайза ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- Скрыть загрузочный экран ---
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loading-screen').style.display = 'none';
+            }, 1000);
+        }, 2000);
+
+        // --- Адаптация для мобильных ---
+        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+            renderer.shadowMap.enabled = false;
+            renderer.setPixelRatio(1);
+            controls.autoRotate = false;
+        }
+    </script>
 </body>
 </html>
