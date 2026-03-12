@@ -2,378 +2,557 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Maxmudov 3D Шашлык</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Maxmudov · шашлык в Томске с погодой</title>
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Inter', sans-serif; color: white; }
-        #info {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.7);
-            padding: 12px 24px;
-            border-radius: 40px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(232, 179, 92, 0.3);
-            pointer-events: none;
-            z-index: 10;
-        }
-        #info h1 {
+        * {
             margin: 0;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #E8B35C;
+            padding: 0;
+            box-sizing: border-box;
         }
-        #info p {
-            margin: 5px 0 0;
-            font-size: 0.9rem;
-            opacity: 0.8;
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            line-height: 1.5;
+            background-color: #0a0c0e;
         }
-        #loading-screen {
+
+        /* Фоновое видео/изображение с мангалом */
+        .hero-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .hero-background video {
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            filter: brightness(0.6) contrast(1.1);
+        }
+
+        /* Если видео не загрузится — будет картинка */
+        .hero-background::after {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0C0F12;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 20;
-            transition: opacity 1s ease;
+            background: url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop') center/cover no-repeat;
+            opacity: 0.5;
+            z-index: -1;
         }
-        .loader {
-            color: #E8B35C;
-            font-size: 1.5rem;
-            border: 3px solid rgba(232,179,92,0.3);
-            border-top-color: #E8B35C;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        #instruction {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-size: 0.9rem;
-            border: 1px solid rgba(255,255,255,0.2);
+
+        /* Затемнение поверх фона для читаемости */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: -1;
             pointer-events: none;
-            z-index: 10;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Логотип */
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #e8b35c 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(232,179,92,0.3);
+        }
+
+        /* Шапка */
+        .header {
+            padding: 25px 0;
+            border-bottom: 1px solid rgba(232,179,92,0.2);
+            background: rgba(10,12,14,0.7);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .free-badge {
+            background: rgba(232,179,92,0.15);
+            border: 1px solid rgba(232,179,92,0.3);
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #e8b35c;
+            backdrop-filter: blur(4px);
+        }
+
+        .free-badge i {
+            margin-right: 8px;
+        }
+
+        .btn-transparent {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: transparent;
+            border: 1.5px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .btn-transparent i {
+            color: #e8b35c;
+        }
+
+        .btn-transparent:hover {
+            border-color: #e8b35c;
+            background: rgba(232,179,92,0.1);
+        }
+
+        /* Блок погоды */
+        .weather-block {
+            background: rgba(26, 31, 38, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 20px 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(232,179,92,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .weather-info i {
+            font-size: 2.5rem;
+            color: #e8b35c;
+        }
+
+        .weather-temp {
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .weather-city {
+            font-size: 1.2rem;
+            color: #aaa;
+        }
+
+        .weather-desc {
+            color: #e8b35c;
+            font-weight: 500;
+        }
+
+        /* Главный экран */
+        .hero {
+            padding: 40px 0 30px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .hero h1 span {
+            color: #e8b35c;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #fff;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Карточки меню */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin: 60px 0;
+        }
+
+        .card {
+            background: rgba(26, 31, 38, 0.8);
+            backdrop-filter: blur(8px);
+            border-radius: 40px;
+            overflow: hidden;
+            border: 1px solid rgba(232,179,92,0.3);
+            transition: transform 0.3s, border-color 0.3s;
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.5);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: #e8b35c;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .card-content {
+            padding: 30px 25px;
+            text-align: center;
+        }
+
+        .card-content h3 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .price {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #e8b35c;
+            margin: 15px 0;
+        }
+
+        .price small {
+            font-size: 1rem;
+            color: #aaa;
+        }
+
+        .desc {
+            color: #ddd;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        /* Блок доставки */
+        .delivery-block {
+            background: rgba(26, 31, 38, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 60px;
+            padding: 40px 30px;
+            margin: 40px 0 60px;
+            border: 1px solid rgba(232,179,92,0.3);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            gap: 30px;
+            text-align: center;
+        }
+
+        .delivery-item {
+            flex: 1 1 200px;
+        }
+
+        .delivery-item i {
+            font-size: 2.5rem;
+            color: #e8b35c;
+            margin-bottom: 15px;
+        }
+
+        .delivery-item h4 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .delivery-item p {
+            color: #ddd;
+        }
+
+        /* Блок заказа */
+        .order-block {
+            background: rgba(26, 31, 38, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 80px;
+            padding: 70px 40px;
+            text-align: center;
+            border: 1px solid rgba(232,179,92,0.3);
+            margin-bottom: 60px;
+        }
+
+        .order-block h2 {
+            font-size: 2.5rem;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 20px;
+        }
+
+        .order-block .lead {
+            font-size: 1.2rem;
+            color: #ddd;
+            margin-bottom: 40px;
+        }
+
+        .order-actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn-telegram {
+            border: 2px solid #e8b35c;
+            color: #e8b35c;
+            padding: 16px 50px;
+            font-size: 1.3rem;
+        }
+
+        .btn-telegram:hover {
+            background: #e8b35c;
+            color: #0a0c0e;
+        }
+
+        .btn-telegram:hover i {
+            color: #0a0c0e;
+        }
+
+        /* Футер */
+        .footer {
+            border-top: 1px solid rgba(232,179,92,0.2);
+            padding: 35px 0;
+            text-align: center;
+            color: #aaa;
+            background: rgba(10,12,14,0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* Адаптация */
+        @media (max-width: 700px) {
+            .header .container {
+                flex-direction: column;
+            }
+            .order-block {
+                padding: 40px 20px;
+            }
+            .weather-block {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="loading-screen">
-        <div class="loader"></div>
+
+<!-- Фоновое видео с мангалом, огнём и паром -->
+<div class="hero-background">
+    <!-- Видео с man on grill (бесплатное стоковое видео с огнём) -->
+    <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1974&auto=format&fit=crop">
+        <source src="https://videos.pexels.com/video-files/5200870/5200870-uhd_2732_1440_25fps.mp4" type="video/mp4">
+        <!-- Если видео недоступно, используем картинку через CSS fallback -->
+    </video>
+</div>
+<div class="overlay"></div> <!-- Лёгкое затемнение -->
+
+<!-- Шапка с логотипом -->
+<header class="header">
+    <div class="container">
+        <div class="logo">maxmudov.com</div>
+        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+            <span class="free-badge"><i class="fas fa-truck"></i> доставка по Томску 0₽</span>
+            <a href="tel:+79016106001" class="btn-transparent"><i class="fas fa-phone-alt"></i> +7 (901) 610-60-01</a>
+        </div>
+    </div>
+</header>
+
+<!-- Главная секция -->
+<section class="hero">
+    <div class="container">
+        <h1>Шашлык <span>на мангале</span></h1>
+        <p>Свежее мясо, приготовленное на углях с любовью. Бесплатная доставка по Томску.</p>
+    </div>
+</section>
+
+<div class="container">
+    <!-- Блок погоды для Томска (реалтайм через wttr.in) -->
+    <div class="weather-block" id="weatherWidget">
+        <div class="weather-info">
+            <i class="fas fa-cloud-sun"></i>
+            <div>
+                <div class="weather-temp" id="weatherTemp">--°C</div>
+                <div class="weather-city"><i class="fas fa-map-marker-alt"></i> Томск</div>
+            </div>
+        </div>
+        <div class="weather-desc" id="weatherDesc">Загрузка погоды...</div>
     </div>
 
-    <div id="info">
-        <h1>maxmudov.com</h1>
-        <p>Шашлык на мангале • 3D презентация</p>
+    <!-- Меню с тремя картинками и ценами -->
+    <div class="menu-grid">
+        <!-- Курица 500₽ -->
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1603360946369-dc9bb6258143?q=80&w=1976&auto=format&fit=crop" alt="Куриный шашлык" class="card-img" loading="lazy">
+            <div class="card-content">
+                <h3>Куриный шашлык</h3>
+                <div class="price">500 ₽ <small>/ порция</small></div>
+                <div class="desc">Нежное куриное филе в кефирном маринаде с луком и специями. 400 г.</div>
+                <a href="#order" class="btn-transparent" style="width: 100%; justify-content: center;"><i class="fab fa-telegram-plane"></i> заказать</a>
+            </div>
+        </div>
+        <!-- Баранина 700₽ -->
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=2069&auto=format&fit=crop" alt="Шашлык из баранины" class="card-img" loading="lazy">
+            <div class="card-content">
+                <h3>Шашлык из баранины</h3>
+                <div class="price">700 ₽ <small>/ порция</small></div>
+                <div class="desc">Мякоть баранины с луком, барбарисом и кавказскими травами. 350 г.</div>
+                <a href="#order" class="btn-transparent" style="width: 100%; justify-content: center;"><i class="fab fa-telegram-plane"></i> заказать</a>
+            </div>
+        </div>
+        <!-- Говядина 750₽ -->
+        <div class="card">
+            <img src="https://images.unsplash.com/photo-1604500131886-ffc6e5a2b82f?q=80&w=1974&auto=format&fit=crop" alt="Шашлык из говядины" class="card-img" loading="lazy">
+            <div class="card-content">
+                <h3>Шашлык из говядины</h3>
+                <div class="price">750 ₽ <small>/ порция</small></div>
+                <div class="desc">Мраморная говядина, маринованная с киви и розмарином. 380 г.</div>
+                <a href="#order" class="btn-transparent" style="width: 100%; justify-content: center;"><i class="fab fa-telegram-plane"></i> заказать</a>
+            </div>
+        </div>
     </div>
 
-    <div id="instruction">
-        <i class="fas fa-mouse"></i> Мышь: вращать / колесо: приближать
+    <!-- Блок с доставкой и оплатой -->
+    <div class="delivery-block">
+        <div class="delivery-item">
+            <i class="fas fa-truck"></i>
+            <h4>Бесплатно</h4>
+            <p>Доставка по Томску при заказе от 2 порций</p>
+        </div>
+        <div class="delivery-item">
+            <i class="fas fa-money-bill-wave"></i>
+            <h4>Наличные</h4>
+            <p>Оплата курьеру при получении</p>
+        </div>
+        <div class="delivery-item">
+            <i class="fas fa-fire"></i>
+            <h4>На мангале</h4>
+            <p>Готовим в день заказа</p>
+        </div>
     </div>
 
-    <!-- Подключаем иконки для инструкции (опционально) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Блок заказа в Telegram (якорь) -->
+    <div id="order" class="order-block">
+        <h2>Хотите сочного шашлыка?</h2>
+        <div class="lead">Напишите нам в Telegram — выберите мясо, время и адрес доставки</div>
+        <div class="order-actions">
+            <a href="https://t.me/+79016106001" class="btn-transparent btn-telegram" target="_blank"><i class="fab fa-telegram-plane"></i> t.me/maxmudov</a>
+            <a href="tel:+79016106001" class="btn-transparent"><i class="fas fa-phone-alt"></i> +7 (901) 610-60-01</a>
+        </div>
+        <div style="margin-top: 30px; color: #aaa;">
+            <i class="fas fa-clock"></i> Работаем с 12:00 до 23:00
+        </div>
+    </div>
+</div>
 
-    <!-- Подключаем Three.js и OrbitControls -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
-            }
-        }
-    </script>
+<!-- Футер -->
+<footer class="footer">
+    <div class="container">
+        <div class="logo" style="font-size: 1.8rem;">maxmudov.com</div>
+        <div>© 2025 · Шашлык в Томске</div>
+        <div>+7 (901) 610-60-01 (Telegram)</div>
+    </div>
+</footer>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-        import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+<!-- Скрипт для получения погоды в реальном времени (Томск) -->
+<script>
+    (function() {
+        const city = 'Томск';
+        const weatherTempEl = document.getElementById('weatherTemp');
+        const weatherDescEl = document.getElementById('weatherDesc');
 
-        // --- 1. Инициализация сцены, камеры, рендерера ---
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0C0F12); // Темный фон как в лендинге
-        
-        // Добавляем легкую дымку для глубины
-        scene.fog = new THREE.Fog(0x0C0F12, 10, 30);
+        // Используем бесплатный сервис wttr.in (не требует API ключа)
+        fetch('https://wttr.in/Tomsk?format=%t+%C&lang=ru')
+            .then(response => response.text())
+            .then(data => {
+                // Пример ответа: "-12°C Облачно"
+                const parts = data.trim().split(' ');
+                const temp = parts[0]; // температура с символом °C
+                const desc = parts.slice(1).join(' '); // описание
 
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(5, 3, 8); // Устанавливаем камеру для красивого обзора
+                weatherTempEl.innerText = temp;
+                weatherDescEl.innerText = desc.charAt(0).toUpperCase() + desc.slice(1);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true; // Включаем тени для реализма
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Мягкие тени
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Оптимизация для экранов
-        document.body.appendChild(renderer.domElement);
-
-        // --- 2. Освещение (атмосферное, как от костра/мангала) ---
-        
-        // Основной направленный свет (как солнце/луна)
-        const directionalLight = new THREE.DirectionalLight(0xffeedd, 1.2);
-        directionalLight.position.set(5, 10, 7);
-        directionalLight.castShadow = true;
-        directionalLight.shadow.mapSize.width = 1024;
-        directionalLight.shadow.mapSize.height = 1024;
-        const d = 10;
-        directionalLight.shadow.camera.left = -d;
-        directionalLight.shadow.camera.right = d;
-        directionalLight.shadow.camera.top = d;
-        directionalLight.shadow.camera.bottom = -d;
-        directionalLight.shadow.camera.near = 2;
-        directionalLight.shadow.camera.far = 20;
-        scene.add(directionalLight);
-
-        // Теплый свет от мангала (снизу)
-        const pointLight = new THREE.PointLight(0xE8B35C, 1.5, 10);
-        pointLight.position.set(0, 2, 1);
-        scene.add(pointLight);
-
-        // Заполняющий свет
-        const ambientLight = new THREE.AmbientLight(0x404060); // Холодноватый для контраста
-        scene.add(ambientLight);
-
-        // Маленькие огоньки для атмосферы
-        const fireLight1 = new THREE.PointLight(0xff5500, 0.8, 5);
-        fireLight1.position.set(-0.8, 0.5, 0.5);
-        scene.add(fireLight1);
-        
-        const fireLight2 = new THREE.PointLight(0xffaa00, 0.8, 5);
-        fireLight2.position.set(0.8, 0.5, -0.5);
-        scene.add(fireLight2);
-
-        // --- 3. Элементы управления (орбита с ограничениями) ---
-        const controls = new OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; // Плавное движение
-        controls.dampingFactor = 0.05;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 1.0;
-        controls.enableZoom = true;
-        controls.maxPolarAngle = Math.PI / 2; // Чтобы нельзя было уйти под землю
-        controls.minDistance = 3;
-        controls.maxDistance = 15;
-        controls.target.set(0, 1, 0);
-
-        // --- 4. Анимация камеры (начальный облет) ---
-        // Будет выполнена один раз при загрузке через простую анимацию
-        let initialAnimation = true;
-        const initialCameraPos = camera.position.clone();
-        const targetCameraPos = new THREE.Vector3(5, 3, 8);
-        
-        // --- 5. Создание простой сцены с геометрией (как замена 3D-модели) ---
-        // В реальном проекте здесь будет загрузка GLTF с оптимизированными моделями
-        
-        // Земля/подиум
-        const groundGeometry = new THREE.CircleGeometry(5, 32);
-        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x2a2a2a, roughness: 0.8, metalness: 0.2 });
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-        ground.rotation.x = -Math.PI / 2;
-        ground.position.y = 0;
-        ground.receiveShadow = true;
-        scene.add(ground);
-
-        // Мангал (простая конструкция)
-        const grillBaseGeo = new THREE.BoxGeometry(2.5, 0.2, 1.5);
-        const grillBaseMat = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.7, metalness: 0.8 });
-        const grillBase = new THREE.Mesh(grillBaseGeo, grillBaseMat);
-        grillBase.position.set(0, 0.1, 0);
-        grillBase.castShadow = true;
-        grillBase.receiveShadow = true;
-        scene.add(grillBase);
-
-        // Ножки мангала
-        const legGeo = new THREE.CylinderGeometry(0.1, 0.15, 0.3);
-        const legMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.4, metalness: 0.9 });
-        const positions = [[-1.0, 0.25, 0.6], [1.0, 0.25, 0.6], [-1.0, 0.25, -0.6], [1.0, 0.25, -0.6]];
-        positions.forEach(pos => {
-            const leg = new THREE.Mesh(legGeo, legMat);
-            leg.position.set(pos[0], pos[1], pos[2]);
-            leg.castShadow = true;
-            leg.receiveShadow = true;
-            scene.add(leg);
-        });
-
-        // Решетка
-        const grillGridGeo = new THREE.BoxGeometry(2.3, 0.05, 1.3);
-        const grillGridMat = new THREE.MeshStandardMaterial({ color: 0x888888, roughness: 0.3, metalness: 0.9, emissive: new THREE.Color(0x331100) });
-        const grillGrid = new THREE.Mesh(grillGridGeo, grillGridMat);
-        grillGrid.position.set(0, 0.3, 0);
-        grillGrid.castShadow = true;
-        grillGrid.receiveShadow = true;
-        scene.add(grillGrid);
-
-        // Угли (несколько сфер)
-        const emberMat = new THREE.MeshStandardMaterial({ color: 0xff6600, emissive: new THREE.Color(0x441100) });
-        for (let i = 0; i < 8; i++) {
-            const emberGeo = new THREE.SphereGeometry(0.1 + Math.random()*0.1, 6);
-            const ember = new THREE.Mesh(emberGeo, emberMat);
-            ember.position.set(-0.8 + i*0.25, 0.2, -0.4 + Math.random()*0.8);
-            ember.castShadow = true;
-            ember.receiveShadow = true;
-            scene.add(ember);
-        }
-
-        // Шашлык (основной объект) - составная модель, чтобы продемонстрировать оптимизацию и центры мешей
-        function createShashlik(meatColor, posX, recipeName) {
-            const group = new THREE.Group();
-            
-            // Шампур
-            const skewerGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.5);
-            const skewerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.7 });
-            const skewer = new THREE.Mesh(skewerGeo, skewerMat);
-            skewer.rotation.z = Math.PI / 2;
-            skewer.position.x = 0;
-            skewer.castShadow = true;
-            skewer.receiveShadow = true;
-            group.add(skewer);
-            
-            // Куски мяса (3 шт.)
-            for (let i = -0.6; i <= 0.6; i+=0.6) {
-                const meatGeo = new THREE.SphereGeometry(0.22, 12);
-                const meatMat = new THREE.MeshStandardMaterial({ color: meatColor, roughness: 0.5, emissive: new THREE.Color(0x221100) });
-                const meat = new THREE.Mesh(meatGeo, meatMat);
-                meat.position.x = i + (Math.random()*0.1);
-                meat.position.y = 0.1 * Math.sin(i*3);
-                meat.castShadow = true;
-                meat.receiveShadow = true;
-                group.add(meat);
-            }
-            
-            // Лук/овощи между мясом
-            for (let i = -0.3; i <= 0.3; i+=0.6) {
-                const onionGeo = new THREE.TorusGeometry(0.1, 0.04, 8, 12, Math.PI);
-                const onionMat = new THREE.MeshStandardMaterial({ color: 0xddbb99, roughness: 0.8 });
-                const onion = new THREE.Mesh(onionGeo, onionMat);
-                onion.rotation.y = Math.PI/2;
-                onion.position.x = i;
-                onion.position.y = 0.1;
-                onion.castShadow = true;
-                onion.receiveShadow = true;
-                group.add(onion);
-            }
-            
-            group.position.set(posX, 0.5, 0);
-            
-            // Добавляем свойство с рецептом для интерактива
-            group.userData = { recipe: recipeName };
-            
-            return group;
-        }
-
-        // Создаем три шампура с разным мясом
-        const chicken = createShashlik(0xffaa66, -1.2, 'Курица: филе бедра, кефир, лук, паприка. Маринад 4ч.');
-        const lamb = createShashlik(0xcc5555, 0, 'Баранина: мякоть ноги, луковый сок, барбарис, зира. Маринад 6ч.');
-        const beef = createShashlik(0x884422, 1.2, 'Говядина: мраморная вырезка, киви, минералка, розмарин. Маринад 2ч.');
-
-        scene.add(chicken);
-        scene.add(lamb);
-        scene.add(beef);
-
-        // Добавляем звезды/искры для атмосферы (мелкие частицы)
-        const starsGeo = new THREE.BufferGeometry();
-        const starsCount = 200;
-        const starsPos = new Float32Array(starsCount * 3);
-        for (let i = 0; i < starsCount * 3; i += 3) {
-            starsPos[i] = (Math.random() - 0.5) * 30;
-            starsPos[i+1] = (Math.random() - 0.5) * 15 + 2;
-            starsPos[i+2] = (Math.random() - 0.5) * 30;
-        }
-        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-        const starsMat = new THREE.PointsMaterial({ color: 0xE8B35C, size: 0.05, transparent: true, opacity: 0.6 });
-        const stars = new THREE.Points(starsGeo, starsMat);
-        scene.add(stars);
-
-        // --- 6. Прогрессивная загрузка и скрытие прелоадера ---
-        setTimeout(() => {
-            document.getElementById('loading-screen').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.display = 'none';
-            }, 1000);
-        }, 2000); // Имитация загрузки 2 сек. В реальном проекте прелоадер скрывается после загрузки всех моделей.
-
-        // --- 7. Интерактивность: Raycaster для кликов по объектам ---
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        
-        window.addEventListener('click', (event) => {
-            // Нормализуем координаты мыши
-            mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-            mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-            
-            raycaster.setFromCamera(mouse, camera);
-            
-            // Проверяем пересечения с нашими шампурами
-            const intersects = raycaster.intersectObjects([chicken, lamb, beef], true); // true для проверки потомков
-            
-            if (intersects.length > 0) {
-                // Находим корневую группу объекта
-                let obj = intersects[0].object;
-                while (obj.parent && !obj.userData.recipe) {
-                    obj = obj.parent;
-                }
-                
-                if (obj.userData.recipe) {
-                    alert(`🔥 Рецепт: ${obj.userData.recipe}`);
+                // Меняем иконку в зависимости от описания (упрощённо)
+                const icon = document.querySelector('#weatherWidget i');
+                if (desc.includes('дожд') || desc.includes('drizzle')) {
+                    icon.className = 'fas fa-cloud-rain';
+                } else if (desc.includes('снег') || desc.includes('snow')) {
+                    icon.className = 'fas fa-snowflake';
+                } else if (desc.includes('облач') || desc.includes('cloud')) {
+                    icon.className = 'fas fa-cloud';
+                } else if (desc.includes('ясн') || desc.includes('clear')) {
+                    icon.className = 'fas fa-sun';
                 } else {
-                    // Fallback, если рецепт не найден
-                    alert('🧂 Сочный шашлык на мангале!');
+                    icon.className = 'fas fa-cloud-sun';
                 }
-            }
-        });
+            })
+            .catch(error => {
+                console.error('Ошибка получения погоды:', error);
+                weatherTempEl.innerText = '--°C';
+                weatherDescEl.innerText = 'Погода временно недоступна';
+            });
+    })();
+</script>
 
-        // --- 8. Оптимизация: Упрощение для мобильных устройств (снижение качества теней и т.д.) ---
-        if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            renderer.shadowMap.enabled = false; // Отключаем тени для производительности
-            renderer.setPixelRatio(1);
-            controls.autoRotate = false; // Отключаем авто-поворот на мобильных
-        }
-
-        // --- 9. Анимация ---
-        let clock = new THREE.Clock();
-
-        function animate() {
-            const delta = clock.getDelta();
-            const elapsedTime = performance.now() * 0.001; // seconds
-
-            // Вращаем звезды
-            stars.rotation.y += 0.0005;
-
-            // Анимируем свет от углей (мерцание)
-            const flicker = Math.sin(elapsedTime * 10) * 0.1 + 0.9;
-            fireLight1.intensity = 0.6 + flicker * 0.3;
-            fireLight2.intensity = 0.6 + flicker * 0.3;
-            pointLight.intensity = 1.2 + flicker * 0.4;
-
-            // Авто-поворот камеры через controls
-            controls.update();
-
-            renderer.render(scene, camera);
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-
-        // --- 10. Обработка изменения размера окна (адаптивность) ---
-        window.addEventListener('resize', onWindowResize, false);
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        console.log('3D Сцена успешно загружена!');
-    </script>
+<!-- Поддержка видео на случай, если источник не загрузится -->
 </body>
 </html>
