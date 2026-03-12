@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Maxmudov 3D шашлык</title>
+    <title>Maxmudov · реальный шашлык на природе 3D</title>
     <style>
         body {
             margin: 0;
@@ -25,7 +25,7 @@
             align-items: flex-start;
             flex-wrap: wrap;
             gap: 20px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            text-shadow: 0 2px 10px rgba(0,0,0,0.7);
         }
         .logo {
             font-family: 'Playfair Display', serif;
@@ -34,17 +34,17 @@
             background: linear-gradient(135deg, #fff, #e8b35c);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            backdrop-filter: blur(5px);
-            padding: 10px 20px;
+            backdrop-filter: blur(8px);
+            padding: 10px 25px;
             border-radius: 50px;
-            border: 1px solid rgba(232,179,92,0.3);
+            border: 1px solid rgba(232,179,92,0.4);
             background: rgba(0,0,0,0.3);
             pointer-events: auto;
         }
         .free-badge {
             background: rgba(0,0,0,0.4);
             backdrop-filter: blur(8px);
-            border: 1px solid rgba(232,179,92,0.4);
+            border: 1px solid rgba(232,179,92,0.5);
             padding: 10px 25px;
             border-radius: 40px;
             color: #e8b35c;
@@ -53,20 +53,7 @@
             align-items: center;
             gap: 10px;
             pointer-events: auto;
-        }
-        .price-tag {
-            position: absolute;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px);
-            border: 1px solid #e8b35c;
-            color: #e8b35c;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 600;
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 5;
+            font-size: 1.1rem;
         }
         #order-panel {
             position: absolute;
@@ -74,38 +61,42 @@
             left: 50%;
             transform: translateX(-50%);
             background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(232,179,92,0.3);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(232,179,92,0.4);
             border-radius: 60px;
-            padding: 15px 30px;
+            padding: 15px 35px;
             display: flex;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
             justify-content: center;
             z-index: 20;
             pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .btn {
             background: transparent;
-            border: 1.5px solid rgba(255,255,255,0.2);
+            border: 1.5px solid rgba(255,255,255,0.25);
             color: white;
-            padding: 12px 28px;
+            padding: 14px 32px;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             transition: all 0.3s;
             cursor: pointer;
             pointer-events: auto;
+            font-size: 1.1rem;
         }
         .btn i {
             color: #e8b35c;
+            font-size: 1.3rem;
         }
         .btn:hover {
             border-color: #e8b35c;
-            background: rgba(232,179,92,0.1);
+            background: rgba(232,179,92,0.15);
+            transform: scale(1.05);
         }
         .btn-telegram {
             border: 2px solid #e8b35c;
@@ -120,17 +111,18 @@
         }
         #instruction {
             position: absolute;
-            bottom: 100px;
+            bottom: 110px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(4px);
-            padding: 6px 20px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            padding: 8px 25px;
             border-radius: 40px;
-            font-size: 0.9rem;
-            color: #ccc;
-            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 1rem;
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
             z-index: 15;
+            letter-spacing: 0.5px;
         }
         #loading-screen {
             position: absolute;
@@ -138,24 +130,46 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0a0c0e;
+            background: #0a2a1a;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 100;
             transition: opacity 1s;
+            flex-direction: column;
+            gap: 20px;
         }
         .loader {
-            border: 4px solid rgba(232,179,92,0.3);
+            border: 5px solid rgba(232,179,92,0.3);
             border-top-color: #e8b35c;
             border-radius: 50%;
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        .loading-text {
+            color: #e8b35c;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+        }
+        .price-tag {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            border: 1px solid #e8b35c;
+            color: #e8b35c;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 5;
+            transform: translate(-50%, -50%);
+        }
     </style>
-    <!-- Шрифты -->
+    <!-- Шрифты и иконки -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -164,6 +178,7 @@
 <body>
     <div id="loading-screen">
         <div class="loader"></div>
+        <div class="loading-text">Загружаем природу...</div>
     </div>
 
     <div id="ui-overlay">
@@ -172,7 +187,7 @@
     </div>
 
     <div id="instruction">
-        <i class="fas fa-mouse"></i> вращай • <i class="fas fa-search-plus"></i> приближай • кликни по шашлыку для рецепта
+        <i class="fas fa-mouse"></i> вращай • <i class="fas fa-search-plus"></i> приближай • кликни по шашлыку
     </div>
 
     <div id="order-panel">
@@ -196,129 +211,225 @@
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
         import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
-        // --- Инициализация ---
+        // --- Инициализация сцены с реалистичным фоном ---
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x1a2b2a); // темный лесной фон
-        // Добавляем туман
-        scene.fog = new THREE.Fog(0x1a2b2a, 10, 30);
+        scene.background = new THREE.Color(0x87CEEB); // небесно-голубой
+        
+        // Камера
+        const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(6, 3, 8);
 
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(5, 3, 8);
-
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+        // Рендерер
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, logarithmicDepthBuffer: false });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.shadowMap.bias = 0.0001;
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.2;
         document.body.appendChild(renderer.domElement);
 
-        // --- Освещение (атмосфера мангала) ---
-        // Солнце/луна
-        const dirLight = new THREE.DirectionalLight(0xffeedd, 1.2);
-        dirLight.position.set(5, 10, 7);
-        dirLight.castShadow = true;
-        dirLight.shadow.mapSize.width = 1024;
-        dirLight.shadow.mapSize.height = 1024;
-        dirLight.shadow.camera.near = 2;
-        dirLight.shadow.camera.far = 20;
-        dirLight.shadow.camera.left = -5;
-        dirLight.shadow.camera.right = 5;
-        dirLight.shadow.camera.top = 5;
-        dirLight.shadow.camera.bottom = -5;
-        scene.add(dirLight);
+        // --- Реалистичное освещение (солнечный день + тени) ---
+        // Солнце
+        const sunLight = new THREE.DirectionalLight(0xfff5e6, 1.5);
+        sunLight.position.set(10, 20, 5);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 40;
+        sunLight.shadow.camera.left = -10;
+        sunLight.shadow.camera.right = 10;
+        sunLight.shadow.camera.top = 10;
+        sunLight.shadow.camera.bottom = -10;
+        sunLight.shadow.bias = -0.0005;
+        scene.add(sunLight);
+
+        // Заполняющий свет от неба
+        const skyLight = new THREE.AmbientLight(0x404c60, 0.8);
+        scene.add(skyLight);
 
         // Теплый свет от мангала
-        const fireLight1 = new THREE.PointLight(0xff5500, 1.0, 6);
-        fireLight1.position.set(-1, 0.8, 1);
+        const fireLight1 = new THREE.PointLight(0xff6600, 1.2, 8);
+        fireLight1.position.set(-0.8, 1.0, 0.5);
         scene.add(fireLight1);
-        const fireLight2 = new THREE.PointLight(0xffaa00, 1.0, 6);
-        fireLight2.position.set(1, 0.8, -1);
-        scene.add(fireLight2);
         
-        // Заполняющий свет
-        const ambientLight = new THREE.AmbientLight(0x404060);
-        scene.add(ambientLight);
+        const fireLight2 = new THREE.PointLight(0xffaa00, 1.2, 8);
+        fireLight2.position.set(0.8, 1.0, -0.5);
+        scene.add(fireLight2);
 
         // --- Контролы ---
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.autoRotate = true;
-        controls.autoRotateSpeed = 0.8;
+        controls.autoRotateSpeed = 0.5;
         controls.enableZoom = true;
-        controls.maxPolarAngle = Math.PI / 2.2;
+        controls.maxPolarAngle = Math.PI / 2.3;
         controls.minDistance = 3;
         controls.maxDistance = 15;
-        controls.target.set(0, 1, 0);
+        controls.target.set(0, 1.2, 0);
 
-        // --- Создание сцены с природой и мангалом ---
+        // --- Создание фотореалистичной природы ---
         
-        // Земля с травой (текстура)
-        const groundGeometry = new THREE.CircleGeometry(12, 32);
-        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x2a4a3a, roughness: 0.9, emissive: new THREE.Color(0x112211) });
-        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        // Трава (имитация через текстурированную плоскость)
+        const grassTexture = (() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#3a6b2a';
+            ctx.fillRect(0, 0, 512, 512);
+            for (let i = 0; i < 5000; i++) {
+                ctx.fillStyle = i % 2 === 0 ? '#4a8b3a' : '#2a5a1a';
+                ctx.fillRect(Math.random()*512, Math.random()*512, 2, 5);
+            }
+            return new THREE.CanvasTexture(canvas);
+        })();
+        
+        const groundGeo = new THREE.CircleGeometry(20, 64);
+        const groundMat = new THREE.MeshStandardMaterial({ map: grassTexture, roughness: 0.9, metalness: 0.1 });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
         ground.rotation.x = -Math.PI / 2;
         ground.position.y = -0.1;
         ground.receiveShadow = true;
         scene.add(ground);
 
-        // Костер/мангал
-        // Основание из камней
+        // Добавляем реалистичные деревья
+        function createTree(x, z, size = 1) {
+            const group = new THREE.Group();
+            
+            // Ствол с текстурой коры
+            const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B, roughness: 0.8 });
+            const trunkGeo = new THREE.CylinderGeometry(0.3 * size, 0.5 * size, 2.2 * size, 8);
+            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+            trunk.position.y = 1.1 * size;
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            group.add(trunk);
+            
+            // Листва
+            const leafMat = new THREE.MeshStandardMaterial({ color: 0x2a7a2a, roughness: 0.4, emissive: new THREE.Color(0x112211) });
+            const leafGeo1 = new THREE.ConeGeometry(0.9 * size, 1.2 * size, 6);
+            const leaf1 = new THREE.Mesh(leafGeo1, leafMat);
+            leaf1.position.y = 1.8 * size;
+            leaf1.castShadow = true;
+            leaf1.receiveShadow = true;
+            group.add(leaf1);
+            
+            const leafGeo2 = new THREE.ConeGeometry(0.7 * size, 1.0 * size, 6);
+            const leaf2 = new THREE.Mesh(leafGeo2, leafMat);
+            leaf2.position.y = 2.5 * size;
+            leaf2.castShadow = true;
+            leaf2.receiveShadow = true;
+            group.add(leaf2);
+            
+            group.position.set(x, 0, z);
+            return group;
+        }
+
+        // Размещаем деревья вокруг поляны
         for (let i = 0; i < 12; i++) {
-            const stoneGeo = new THREE.DodecahedronGeometry(0.2 + Math.random()*0.2);
-            const stoneMat = new THREE.MeshStandardMaterial({ color: 0x886644, roughness: 0.8 });
-            const stone = new THREE.Mesh(stoneGeo, stoneMat);
             const angle = (i / 12) * Math.PI * 2;
-            stone.position.set(Math.cos(angle)*1.1, 0.1, Math.sin(angle)*1.1);
+            const radius = 5 + Math.random() * 3;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+            const tree = createTree(x, z, 0.8 + Math.random()*0.4);
+            scene.add(tree);
+        }
+
+        // Добавляем кусты
+        const bushMat = new THREE.MeshStandardMaterial({ color: 0x3a8b3a, roughness: 0.6 });
+        for (let i = 0; i < 20; i++) {
+            const bushGeo = new THREE.SphereGeometry(0.3 + Math.random()*0.3, 5);
+            const bush = new THREE.Mesh(bushGeo, bushMat);
+            bush.position.set((Math.random()-0.5)*8, 0.2, (Math.random()-0.5)*8);
+            bush.castShadow = true;
+            bush.receiveShadow = true;
+            scene.add(bush);
+        }
+
+        // --- Реалистичный мангал из камня и металла ---
+        
+        // Каменное основание
+        const stoneMat = new THREE.MeshStandardMaterial({ color: 0x886644, roughness: 0.9 });
+        for (let i = 0; i < 8; i++) {
+            const stoneGeo = new THREE.DodecahedronGeometry(0.25 + Math.random()*0.2);
+            const stone = new THREE.Mesh(stoneGeo, stoneMat);
+            const angle = (i / 8) * Math.PI * 2;
+            stone.position.set(Math.cos(angle)*1.2, 0.1, Math.sin(angle)*1.2);
             stone.castShadow = true;
             stone.receiveShadow = true;
             scene.add(stone);
         }
-        
-        // Дрова
+
+        // Металлическая решетка
+        const gridMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.3, metalness: 0.9, emissive: new THREE.Color(0x221100) });
+        const gridGeo = new THREE.BoxGeometry(2.4, 0.05, 1.4);
+        const grid = new THREE.Mesh(gridGeo, gridMat);
+        grid.position.set(0, 0.65, 0);
+        grid.castShadow = true;
+        grid.receiveShadow = true;
+        scene.add(grid);
+
+        // Дрова под решеткой
         const woodMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B, roughness: 0.9 });
-        for (let i = 0; i < 5; i++) {
-            const logGeo = new THREE.CylinderGeometry(0.15, 0.15, 1.2);
+        for (let i = 0; i < 6; i++) {
+            const logGeo = new THREE.CylinderGeometry(0.15, 0.15, 1.0, 5);
             const log = new THREE.Mesh(logGeo, woodMat);
-            log.rotation.z = Math.random() * 0.5;
-            log.rotation.x = Math.random() * 0.5;
-            log.position.set(-0.3 + i*0.15, 0.2, -0.2 + i*0.1);
+            log.rotation.z = 0.2;
+            log.rotation.x = 0.3;
+            log.position.set(-0.5 + i*0.2, 0.3, 0.2);
             log.castShadow = true;
             log.receiveShadow = true;
             scene.add(log);
         }
 
-        // Угли
-        const emberMat = new THREE.MeshStandardMaterial({ color: 0xff3300, emissive: new THREE.Color(0x441100) });
-        for (let i = 0; i < 15; i++) {
-            const emberGeo = new THREE.SphereGeometry(0.05 + Math.random()*0.1, 5);
+        // Угли с красным свечением
+        const emberMat = new THREE.MeshStandardMaterial({ color: 0xff4400, emissive: new THREE.Color(0x441100) });
+        for (let i = 0; i < 20; i++) {
+            const emberGeo = new THREE.SphereGeometry(0.05 + Math.random()*0.1, 4);
             const ember = new THREE.Mesh(emberGeo, emberMat);
-            ember.position.set(-0.5 + Math.random(), 0.15 + Math.random()*0.2, -0.5 + Math.random());
+            ember.position.set(-0.8 + Math.random()*1.6, 0.2, -0.6 + Math.random()*1.2);
             ember.castShadow = true;
             ember.receiveShadow = true;
             scene.add(ember);
         }
 
-        // Решетка над мангалом
-        const gridGeo = new THREE.BoxGeometry(2.5, 0.05, 1.5);
-        const gridMat = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, roughness: 0.4, metalness: 0.7, emissive: new THREE.Color(0x221100) });
-        const grid = new THREE.Mesh(gridGeo, gridMat);
-        grid.position.set(0, 0.6, 0);
-        grid.castShadow = true;
-        grid.receiveShadow = true;
-        scene.add(grid);
-
-        // --- Создание шашлыков (реалистичные модели) ---
-        // Вместо загрузки внешних моделей, создаем составные объекты, максимально похожие на фото
+        // --- Фотореалистичные шашлыки (с текстурой мяса) ---
         
-        function createChickenSkewer(posX) {
+        function createMeatPiece(color, posX, posY, scaleV) {
+            const meatGeo = new THREE.SphereGeometry(0.22, 16);
+            // Имитация текстуры мяса через канвас
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#' + color.toString(16).padStart(6, '0');
+            ctx.fillRect(0, 0, 64, 64);
+            // Добавляем "прожарку"
+            ctx.fillStyle = '#442200';
+            for (let i=0; i<20; i++) {
+                ctx.fillRect(Math.random()*64, Math.random()*64, 4, 4);
+            }
+            const texture = new THREE.CanvasTexture(canvas);
+            
+            const meatMat = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.4, emissive: new THREE.Color(0x221100) });
+            const meat = new THREE.Mesh(meatGeo, meatMat);
+            meat.position.set(posX, posY, 0);
+            meat.scale.set(scaleV, scaleV*0.8, scaleV*0.8);
+            meat.castShadow = true;
+            meat.receiveShadow = true;
+            return meat;
+        }
+
+        function createSkewer(posX, meatColor, price, recipeText) {
             const group = new THREE.Group();
-            const meatColor = 0xffaa66; // куриный цвет
-            const specColor = 0xffeedd;
             
             // Шампур
-            const skewerGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.8);
-            const skewerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.8 });
+            const skewerGeo = new THREE.CylinderGeometry(0.04, 0.04, 2.0);
+            const skewerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.9 });
             const skewer = new THREE.Mesh(skewerGeo, skewerMat);
             skewer.rotation.z = Math.PI / 2;
             skewer.position.x = 0;
@@ -326,182 +437,61 @@
             skewer.receiveShadow = true;
             group.add(skewer);
             
-            // Куски курицы (неровные, обжаренные)
-            for (let i = -0.7; i <= 0.7; i+=0.45) {
-                const meatGeo = new THREE.SphereGeometry(0.22, 7);
-                const meatMat = new THREE.MeshStandardMaterial({ color: meatColor, roughness: 0.3, emissive: new THREE.Color(0x221100) });
-                const meat = new THREE.Mesh(meatGeo, meatMat);
-                meat.position.x = i;
-                meat.position.y = 0.05 * Math.sin(i*4);
-                meat.scale.set(1.1, 0.9, 0.9);
-                meat.castShadow = true;
-                meat.receiveShadow = true;
+            // Куски мяса (3-4 штуки)
+            const positions = [-0.7, -0.2, 0.3, 0.7];
+            positions.forEach((x, i) => {
+                const meat = createMeatPiece(meatColor, x, 0.1, 1.0);
                 group.add(meat);
-            }
+            });
             
-            // Лук/перец
-            const onionMat = new THREE.MeshStandardMaterial({ color: 0xddbb99 });
-            for (let i = -0.4; i <= 0.4; i+=0.8) {
+            // Лук/овощи
+            const vegMat = new THREE.MeshStandardMaterial({ color: 0xddbb99 });
+            const onionPos = [-0.45, 0.15, 0.55];
+            onionPos.forEach(x => {
                 const onionGeo = new THREE.TorusGeometry(0.1, 0.04, 6, 10, Math.PI);
-                const onion = new THREE.Mesh(onionGeo, onionMat);
+                const onion = new THREE.Mesh(onionGeo, vegMat);
                 onion.rotation.y = Math.PI/2;
                 onion.rotation.x = 0.2;
-                onion.position.x = i;
-                onion.position.y = 0.1;
+                onion.position.set(x, 0.15, 0);
                 onion.castShadow = true;
                 onion.receiveShadow = true;
                 group.add(onion);
-            }
+            });
             
-            group.position.set(posX, 0.8, 0);
-            group.userData = { type: 'chicken', price: '500 ₽', recipe: 'Курица: филе бедра, кефир, лук, паприка. Маринад 4ч.' };
+            group.position.set(posX, 0.9, 0);
+            group.userData = { price: price, recipe: recipeText };
             return group;
         }
 
-        function createLambSkewer(posX) {
-            const group = new THREE.Group();
-            const meatColor = 0xcc5555; // баранина
-            
-            const skewerGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.8);
-            const skewerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.8 });
-            const skewer = new THREE.Mesh(skewerGeo, skewerMat);
-            skewer.rotation.z = Math.PI / 2;
-            skewer.position.x = 0;
-            skewer.castShadow = true;
-            skewer.receiveShadow = true;
-            group.add(skewer);
-            
-            // Куски баранины
-            for (let i = -0.7; i <= 0.7; i+=0.5) {
-                const meatGeo = new THREE.SphereGeometry(0.23, 6);
-                const meatMat = new THREE.MeshStandardMaterial({ color: meatColor, roughness: 0.4, emissive: new THREE.Color(0x331100) });
-                const meat = new THREE.Mesh(meatGeo, meatMat);
-                meat.position.x = i;
-                meat.position.y = 0.1 * Math.sin(i*3);
-                meat.scale.set(1.2, 0.8, 0.8);
-                meat.castShadow = true;
-                meat.receiveShadow = true;
-                group.add(meat);
-            }
-            
-            // Жир/специи
-            const fatMat = new THREE.MeshStandardMaterial({ color: 0xffdd99 });
-            for (let i = -0.5; i <= 0.5; i+=1.0) {
-                const fatGeo = new THREE.SphereGeometry(0.08, 5);
-                const fat = new THREE.Mesh(fatGeo, fatMat);
-                fat.position.x = i;
-                fat.position.y = 0.2;
-                fat.castShadow = true;
-                group.add(fat);
-            }
-            
-            group.position.set(posX, 0.8, 0);
-            group.userData = { type: 'lamb', price: '700 ₽', recipe: 'Баранина: мякоть ноги, барбарис, зира, лук. Маринад 6ч.' };
-            return group;
-        }
+        // Создаем три шампура с разным мясом
+        const chickenSkewer = createSkewer(-1.5, 0xffaa66, '500 ₽', 'Курица: филе бедра, кефир, лук, паприка. Маринад 4ч.');
+        const lambSkewer = createSkewer(0, 0xcc5555, '700 ₽', 'Баранина: мякоть ноги, барбарис, зира, лук. Маринад 6ч.');
+        const beefSkewer = createSkewer(1.5, 0x884422, '750 ₽', 'Говядина: мраморная вырезка, киви, розмарин. Маринад 2ч.');
 
-        function createBeefSkewer(posX) {
-            const group = new THREE.Group();
-            const meatColor = 0x884422; // говядина
-            
-            const skewerGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.8);
-            const skewerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, roughness: 0.2, metalness: 0.8 });
-            const skewer = new THREE.Mesh(skewerGeo, skewerMat);
-            skewer.rotation.z = Math.PI / 2;
-            skewer.position.x = 0;
-            skewer.castShadow = true;
-            skewer.receiveShadow = true;
-            group.add(skewer);
-            
-            // Крупные куски говядины
-            for (let i = -0.7; i <= 0.7; i+=0.55) {
-                const meatGeo = new THREE.SphereGeometry(0.24, 8);
-                const meatMat = new THREE.MeshStandardMaterial({ color: meatColor, roughness: 0.3, emissive: new THREE.Color(0x221100) });
-                const meat = new THREE.Mesh(meatGeo, meatMat);
-                meat.position.x = i;
-                meat.position.y = 0.1;
-                meat.scale.set(1.3, 0.7, 0.7);
-                meat.castShadow = true;
-                meat.receiveShadow = true;
-                group.add(meat);
-            }
-            
-            // Травы
-            const herbMat = new THREE.MeshStandardMaterial({ color: 0x33aa33 });
-            for (let i = -0.3; i <= 0.3; i+=0.6) {
-                const herbGeo = new THREE.ConeGeometry(0.05, 0.1, 4);
-                const herb = new THREE.Mesh(herbGeo, herbMat);
-                herb.position.x = i;
-                herb.position.y = 0.25;
-                herb.castShadow = true;
-                group.add(herb);
-            }
-            
-            group.position.set(posX, 0.8, 0);
-            group.userData = { type: 'beef', price: '750 ₽', recipe: 'Говядина: мраморная вырезка, киви, розмарин. Маринад 2ч.' };
-            return group;
-        }
+        scene.add(chickenSkewer);
+        scene.add(lambSkewer);
+        scene.add(beefSkewer);
 
-        // Размещаем три шампура
-        const chicken = createChickenSkewer(-1.5);
-        const lamb = createLambSkewer(0);
-        const beef = createBeefSkewer(1.5);
-        
-        scene.add(chicken);
-        scene.add(lamb);
-        scene.add(beef);
-
-        // Добавляем деревья/кусты для атмосферы
-        const treeMat = new THREE.MeshStandardMaterial({ color: 0x3a6b4a });
-        const trunkMat = new THREE.MeshStandardMaterial({ color: 0x8B5A2B });
-        for (let t = 0; t < 8; t++) {
-            const angle = (t / 8) * Math.PI * 2;
-            const radius = 4 + Math.random()*2;
-            const x = Math.cos(angle) * radius;
-            const z = Math.sin(angle) * radius;
-            
-            const trunkGeo = new THREE.CylinderGeometry(0.2, 0.3, 1.5);
-            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
-            trunk.position.set(x, 0.7, z);
-            trunk.castShadow = true;
-            trunk.receiveShadow = true;
-            scene.add(trunk);
-            
-            const foliageGeo = new THREE.ConeGeometry(0.8, 1.2, 6);
-            const foliage = new THREE.Mesh(foliageGeo, treeMat);
-            foliage.position.set(x, 1.5, z);
-            foliage.castShadow = true;
-            foliage.receiveShadow = true;
-            scene.add(foliage);
-        }
-
-        // Дым/пар (частицы)
-        const particleCount = 40;
+        // Добавляем пар/дым (частицы)
+        const particleCount = 60;
         const particleGeo = new THREE.BufferGeometry();
-        const particlePositions = new Float32Array(particleCount * 3);
+        const particlePos = new Float32Array(particleCount * 3);
         for (let i = 0; i < particleCount * 3; i += 3) {
-            particlePositions[i] = (Math.random() - 0.5) * 1.5;
-            particlePositions[i+1] = Math.random() * 2.5;
-            particlePositions[i+2] = (Math.random() - 0.5) * 1.5;
+            particlePos[i] = (Math.random() - 0.5) * 2;
+            particlePos[i+1] = Math.random() * 2.5;
+            particlePos[i+2] = (Math.random() - 0.5) * 1.5;
         }
-        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-        const particleMat = new THREE.PointsMaterial({ color: 0xcccccc, size: 0.08, transparent: true, opacity: 0.3, blending: THREE.NormalBlending });
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0xeeeeee, size: 0.1, transparent: true, opacity: 0.3, blending: THREE.NormalBlending });
         const particles = new THREE.Points(particleGeo, particleMat);
-        particles.position.set(0, 0.6, 0);
+        particles.position.set(0, 0.8, 0);
         scene.add(particles);
 
-        // Звезды/искры
-        const starsGeo = new THREE.BufferGeometry();
-        const starsPos = new Float32Array(200 * 3);
-        for (let i = 0; i < 200 * 3; i += 3) {
-            starsPos[i] = (Math.random() - 0.5) * 40;
-            starsPos[i+1] = (Math.random() - 0.5) * 20 + 5;
-            starsPos[i+2] = (Math.random() - 0.5) * 40;
-        }
-        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-        const starsMat = new THREE.PointsMaterial({ color: 0xe8b35c, size: 0.1 });
-        const stars = new THREE.Points(starsGeo, starsMat);
-        scene.add(stars);
+        // Небо с облаками (простая сфера с текстурой)
+        const skyMat = new THREE.MeshStandardMaterial({ color: 0x87CEEB, emissive: new THREE.Color(0x224466), side: THREE.BackSide });
+        const skyGeo = new THREE.SphereGeometry(50, 32, 16);
+        const sky = new THREE.Mesh(skyGeo, skyMat);
+        scene.add(sky);
 
         // --- Рэйкаст для интерактива (клик по шашлыку) ---
         const raycaster = new THREE.Raycaster();
@@ -513,17 +503,16 @@
             
             raycaster.setFromCamera(mouse, camera);
             
-            const objects = [chicken, lamb, beef];
-            const intersects = raycaster.intersectObjects(objects, true); // включая потомков
+            const objects = [chickenSkewer, lambSkewer, beefSkewer];
+            const intersects = raycaster.intersectObjects(objects, true);
             
             if (intersects.length > 0) {
-                // Находим корневую группу с userData
                 let obj = intersects[0].object;
-                while (obj.parent && !obj.userData?.recipe) {
+                while (obj.parent && !obj.parent.userData?.price) {
                     obj = obj.parent;
                 }
-                if (obj.userData?.recipe) {
-                    alert(`🔥 ${obj.userData.type}\n${obj.userData.recipe}\nЦена: ${obj.userData.price}`);
+                if (obj.parent?.userData?.price) {
+                    alert(`🔥 Шашлык\n${obj.parent.userData.recipe}\nЦена: ${obj.parent.userData.price}`);
                 } else {
                     alert('Сочный шашлык на мангале!');
                 }
@@ -537,16 +526,13 @@
             const delta = clock.getDelta();
             const time = performance.now() * 0.001;
             
-            // Анимация огня (мерцание)
-            const flicker = Math.sin(time * 8) * 0.2 + 0.8;
-            fireLight1.intensity = 0.8 + flicker * 0.3;
-            fireLight2.intensity = 0.8 + flicker * 0.3;
+            // Мерцание огня
+            const flicker = Math.sin(time * 10) * 0.2 + 0.8;
+            fireLight1.intensity = 1.0 + flicker * 0.4;
+            fireLight2.intensity = 1.0 + flicker * 0.4;
             
-            // Вращение звезд
-            stars.rotation.y += 0.0005;
-            
-            // Движение частиц дыма
-            particles.rotation.y += 0.001;
+            // Движение дыма
+            particles.rotation.y += 0.002;
             
             controls.update();
             renderer.render(scene, camera);
@@ -555,22 +541,22 @@
         
         animate();
 
-        // --- Обработка ресайза ---
+        // --- Ресайз ---
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- Скрыть загрузочный экран ---
+        // --- Скрыть загрузку ---
         setTimeout(() => {
             document.getElementById('loading-screen').style.opacity = '0';
             setTimeout(() => {
                 document.getElementById('loading-screen').style.display = 'none';
             }, 1000);
-        }, 2000);
+        }, 2500);
 
-        // --- Адаптация для мобильных ---
+        // --- Мобильная адаптация ---
         if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
             renderer.shadowMap.enabled = false;
             renderer.setPixelRatio(1);
